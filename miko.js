@@ -86,15 +86,54 @@ class Miko {
     }
 
     update() {
-        if (this.game.keys["ArrowRight"]) {
+        // State priority: jump > hit > kick > walk > idle
+        if (this.state === "jump") {
+            // Handles jump progression
+            this.y += this.jumpVelocity;
+            this.jumpVelocity += 1; // Gravity effect
+    
+            // End jump when back on ground
+            if (this.y >= this.jumpStartY) {
+                this.y = this.jumpStartY;
+                this.state = "idle";
+            }
+            return; // Prevents other states from overriding
+        }
+    
+        if (this.state === "hit" && !this.animations["hit"].isDone()) {
+            return; // Waits for hit animation to finish
+        }
+    
+        if (this.state === "kick" && !this.animations["kick"].isDone()) {
+            return; // Wait for kick animation to finish
+        }
+    
+        // Handle input for actions
+        if (this.game.keys["ArrowUp"] && this.state !== "jump") {
+            // Start jump
+            this.state = "jump";
+            this.jumpStartY = this.y;
+            this.jumpVelocity = -15;
+        } else if (this.game.keys["Space"]) {
+            // Start hit animation
+            this.state = "hit";
+            this.animations["hit"].reset(); // Reset animation
+        } else if (this.game.keys["KeyK"]) {
+            // Start kick animation
+            this.state = "kick";
+            this.animations["kick"].reset(); // Reset animation
+        } else if (this.game.keys["ArrowRight"]) {
+            // Walk right
             this.x += this.speed;
             this.state = "walk";
             this.facing = 1;
         } else if (this.game.keys["ArrowLeft"]) {
+            // Walk left
             this.x -= this.speed;
             this.state = "walk";
             this.facing = -1;
         } else {
+            // Default to idle
             this.state = "idle";
         }
     }
