@@ -6,6 +6,11 @@ class Miko {
         this.speed = 5;
         this.facing = 1; // 1 for right, -1 for left
         
+        // Auto movement parameters
+        this.patrolling = true;
+        this.minX = 50;  // Left boundary
+        this.maxX = 800; // Right boundary
+        
         // Physics parameters
         this.jumpInitialVelocity = -15;
         this.gravity = 0.8;
@@ -17,7 +22,7 @@ class Miko {
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/Miko.png");
         
         // States
-        this.state = "idle";
+        this.state = "walk"; // Start in walking state
         this.animations = {};
         
         // Initialize animations
@@ -88,61 +93,57 @@ class Miko {
     }
 
     update() {
-        // Handle horizontal movement
-        if (this.game.keys["ArrowRight"]) {
-            this.x += this.speed;
-            this.facing = 1;
-            if (!this.isInAir && this.state !== "hit" && this.state !== "kick") {
-                this.state = "walk";
+        if (this.patrolling) {
+            // Move based on facing direction
+            this.x += this.speed * this.facing;
+            
+            // Change direction when reaching boundaries
+            if (this.x >= this.maxX) {
+                this.facing = -1;
+                this.x = this.maxX;
+            } else if (this.x <= this.minX) {
+                this.facing = 1;
+                this.x = this.minX;
             }
-        } else if (this.game.keys["ArrowLeft"]) {
-            this.x -= this.speed;
-            this.facing = -1;
-            if (!this.isInAir && this.state !== "hit" && this.state !== "kick") {
-                this.state = "walk";
-            }
-        } else if (!this.isInAir && this.state !== "hit" && this.state !== "kick") {
-            this.state = "idle";
+            
+            // Keep walking animation
+            this.state = "walk";
         }
-
-        // Handle jump
-        if (this.game.keys["ArrowUp"] && !this.isInAir) {
+        
+        // Optional: Add random actions
+        if (Math.random() < 0.005) { // 0.5% chance each frame
+            this.state = "kick";
+            this.animations["kick"].reset();
+            setTimeout(() => {
+                this.state = "walk";
+            }, 300); // Return to walking after 300ms
+        }
+        
+        // Optional: Add random jumps
+        if (Math.random() < 0.002 && !this.isInAir) { // 0.2% chance each frame
             this.isInAir = true;
             this.state = "jump";
             this.jumpVelocity = this.jumpInitialVelocity;
             this.animations["jump"].reset();
         }
-
-        // Apply gravity and handle jumping
+        
+        // Handle jumping physics if in air
         if (this.isInAir) {
             this.y += this.jumpVelocity;
             this.jumpVelocity += this.gravity;
 
-            // Check for landing
             if (this.y >= this.jumpStartY) {
                 this.y = this.jumpStartY;
                 this.isInAir = false;
-                this.state = "idle";
+                this.state = "walk";
             }
-        }
-
-        // Handle attacks
-        if (this.game.keys["Space"] && !this.isInAir && this.state !== "hit" && this.state !== "kick") {
-            this.state = "hit";
-            this.animations["hit"].reset();
-        } else if (this.game.keys["KeyK"] && !this.isInAir && this.state !== "hit" && this.state !== "kick") {
-            this.state = "kick";
-            this.animations["kick"].reset();
         }
 
         // Check if attack animations are done
         if ((this.state === "hit" && this.animations["hit"].isDone()) || 
             (this.state === "kick" && this.animations["kick"].isDone())) {
-            this.state = "idle";
+            this.state = "walk";
         }
-
-        // Keep character within canvas bounds
-        this.x = Math.max(0, Math.min(this.x, this.game.ctx.canvas.width - this.animations[this.state].width));
     }
 
     draw(ctx) {
