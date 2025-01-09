@@ -86,6 +86,9 @@ class Miko {
     }
 
     update() {
+        console.log("Current State:", this.state);
+        console.log("Keys Pressed:", this.game.keys);
+
         // State priority: jump > hit > kick > walk > idle
         if (this.state === "jump") {
             // Handles jump progression
