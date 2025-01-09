@@ -6,6 +6,13 @@ class Miko {
         this.speed = 5;
         this.facing = 1; // 1 for right, -1 for left
         
+        // Physics parameters
+        this.jumpInitialVelocity = -15;
+        this.gravity = 0.8;
+        this.jumpVelocity = 0;
+        this.jumpStartY = this.y;
+        this.isInAir = false;
+        
         // Load sprite sheet
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/Miko.png");
         
@@ -40,8 +47,6 @@ class Miko {
             true    // loop
         );
         
-        // Add other animations here...
-        // Jumping animation
         this.animations["jump"] = new Animator(
             this.spritesheet,
             141,    // x coordinate
@@ -55,7 +60,6 @@ class Miko {
             false   // don't loop
         );
         
-        // Kicking animation
         this.animations["kick"] = new Animator(
             this.spritesheet,
             335,    // x coordinate
@@ -69,7 +73,6 @@ class Miko {
             false   // don't loop
         );
         
-        // Hitting animation
         this.animations["hit"] = new Animator(
             this.spritesheet,
             142,    // x coordinate
@@ -82,63 +85,64 @@ class Miko {
             false,  // reverse
             false   // don't loop
         );
-        
     }
 
     update() {
-        console.log("Current State:", this.state);
-        console.log("Keys Pressed:", this.game.keys);
-
-        // State priority: jump > hit > kick > walk > idle
-        if (this.state === "jump") {
-            // Handles jump progression
-            this.y += this.jumpVelocity;
-            this.jumpVelocity += 1; // Gravity effect
-    
-            // End jump when back on ground
-            if (this.y >= this.jumpStartY) {
-                this.y = this.jumpStartY;
-                this.state = "idle";
-            }
-            return; // Prevents other states from overriding
-        }
-    
-        if (this.state === "hit" && !this.animations["hit"].isDone()) {
-            return; // Waits for hit animation to finish
-        }
-    
-        if (this.state === "kick" && !this.animations["kick"].isDone()) {
-            return; // Wait for kick animation to finish
-        }
-    
-        // Handle input for actions
-        if (this.game.keys["ArrowUp"] && this.state !== "jump") {
-            // Start jump
-            this.state = "jump";
-            this.jumpStartY = this.y;
-            this.jumpVelocity = -15;
-        } else if (this.game.keys["Space"]) {
-            // Start hit animation
-            this.state = "hit";
-            this.animations["hit"].reset(); // Reset animation
-        } else if (this.game.keys["KeyK"]) {
-            // Start kick animation
-            this.state = "kick";
-            this.animations["kick"].reset(); // Reset animation
-        } else if (this.game.keys["ArrowRight"]) {
-            // Walk right
+        // Handle horizontal movement
+        if (this.game.keys["ArrowRight"]) {
             this.x += this.speed;
-            this.state = "walk";
             this.facing = 1;
+            if (!this.isInAir && this.state !== "hit" && this.state !== "kick") {
+                this.state = "walk";
+            }
         } else if (this.game.keys["ArrowLeft"]) {
-            // Walk left
             this.x -= this.speed;
-            this.state = "walk";
             this.facing = -1;
-        } else {
-            // Default to idle
+            if (!this.isInAir && this.state !== "hit" && this.state !== "kick") {
+                this.state = "walk";
+            }
+        } else if (!this.isInAir && this.state !== "hit" && this.state !== "kick") {
             this.state = "idle";
         }
+
+        // Handle jump
+        if (this.game.keys["ArrowUp"] && !this.isInAir) {
+            this.isInAir = true;
+            this.state = "jump";
+            this.jumpVelocity = this.jumpInitialVelocity;
+            this.animations["jump"].reset();
+        }
+
+        // Apply gravity and handle jumping
+        if (this.isInAir) {
+            this.y += this.jumpVelocity;
+            this.jumpVelocity += this.gravity;
+
+            // Check for landing
+            if (this.y >= this.jumpStartY) {
+                this.y = this.jumpStartY;
+                this.isInAir = false;
+                this.state = "idle";
+            }
+        }
+
+        // Handle attacks
+        if (this.game.keys["Space"] && !this.isInAir && this.state !== "hit" && this.state !== "kick") {
+            this.state = "hit";
+            this.animations["hit"].reset();
+        } else if (this.game.keys["KeyK"] && !this.isInAir && this.state !== "hit" && this.state !== "kick") {
+            this.state = "kick";
+            this.animations["kick"].reset();
+        }
+
+        // Check if attack animations are done
+        if ((this.state === "hit" && this.animations["hit"].isDone()) || 
+            (this.state === "kick" && this.animations["kick"].isDone())) {
+            this.state = "idle";
+        }
+
+        // Keep character within canvas bounds
+        this.x = Math.max(0, Math.min(this.x, this.game.ctx.canvas.width - this.animations[this.state].width));
     }
 
     draw(ctx) {
@@ -158,7 +162,6 @@ class Miko {
         
         ctx.restore();
     }
-
 }
 
 
