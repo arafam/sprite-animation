@@ -44,7 +44,7 @@ class Miko {
             143,    // x coordinate of first frame
             211,    // y coordinate
             41,     // frame width
-            63,     // frame height
+            70,     // frame height
             4,      // frame count
             0.15,   // frame duration
             45,     // padding between frames
@@ -57,7 +57,7 @@ class Miko {
             141,    // x coordinate
             123,    // y coordinate
             45,     // frame width
-            61,     // frame height
+            62,     // frame height
             3,      // frame count
             0.15,   // frame duration
             37,     // padding
@@ -70,7 +70,7 @@ class Miko {
             335,    // x coordinate
             20,     // y coordinate
             51,     // frame width
-            58,     // frame height
+            59,     // frame height
             2,      // frame count
             0.1,    // frame duration
             18,     // padding
@@ -83,7 +83,7 @@ class Miko {
             142,    // x coordinate
             17,     // y coordinate
             52,     // frame width
-            61,     // frame height
+            62,     // frame height
             2,      // frame count
             0.1,    // frame duration
             26,     // padding
@@ -111,16 +111,16 @@ class Miko {
         }
         
         // Optional: Add random actions
-        if (Math.random() < 0.005) { // 0.5% chance each frame
+        if (Math.random() < 0.007) { // 0.7% chance each frame
             this.state = "kick";
             this.animations["kick"].reset();
             setTimeout(() => {
                 this.state = "walk";
-            }, 300); // Return to walking after 300ms
+            }, 400); // Return to walking after 300ms
         }
         
         // Optional: Add random jumps
-        if (Math.random() < 0.002 && !this.isInAir) { // 0.2% chance each frame
+        if (Math.random() < 0.005 && !this.isInAir) { // 0.5% chance each frame
             this.isInAir = true;
             this.state = "jump";
             this.jumpVelocity = this.jumpInitialVelocity;
