@@ -9,7 +9,7 @@ class Miko {
         // Auto movement parameters
         this.patrolling = true;
         this.minX = 50;  // Left boundary
-        this.maxX = 800; // Right boundary
+        this.maxX = 900; // Right boundary
         
         // Physics parameters
         this.jumpInitialVelocity = -15;
@@ -25,70 +25,74 @@ class Miko {
         this.state = "walk"; // Start in walking state
         this.animations = {};
         
-        // Initialize animations
+        // Idle animation (single frame)
         this.animations["idle"] = new Animator(
             this.spritesheet,
-            14,     // x coordinate
-            18,     // y coordinate
+            0,      // x coordinate
+            0,      // y coordinate
             37,     // frame width
-            60,     // frame height
+            50,     // frame height
             1,      // frame count
-            0.1,    // frame duration
+            0.2,    // frame duration
             0,      // padding
             false,  // reverse
             true    // loop
         );
         
-        this.animations["walk"] = new Animator(
-            this.spritesheet,
-            143,    // x coordinate of first frame
-            211,    // y coordinate
-            41,     // frame width
-            70,     // frame height
-            4,      // frame count
-            0.15,   // frame duration
-            45,     // padding between frames
-            false,  // reverse
-            true    // loop
-        );
-        
-        this.animations["jump"] = new Animator(
-            this.spritesheet,
-            141,    // x coordinate
-            123,    // y coordinate
-            45,     // frame width
-            62,     // frame height
-            3,      // frame count
-            0.15,   // frame duration
-            37,     // padding
-            false,  // reverse
-            false   // don't loop
-        );
-        
-        this.animations["kick"] = new Animator(
-            this.spritesheet,
-            335,    // x coordinate
-            20,     // y coordinate
-            51,     // frame width
-            59,     // frame height
-            2,      // frame count
-            0.1,    // frame duration
-            18,     // padding
-            false,  // reverse
-            false   // don't loop
-        );
-        
+        // Hit animation (2 frames)
         this.animations["hit"] = new Animator(
             this.spritesheet,
-            142,    // x coordinate
-            17,     // y coordinate
+            37,     // x coordinate
+            0,      // y coordinate
             52,     // frame width
-            62,     // frame height
+            50,     // frame height
             2,      // frame count
-            0.1,    // frame duration
-            26,     // padding
+            0.2,    // frame duration
+            0,      // padding
             false,  // reverse
-            false   // don't loop
+            false   // loop
+        );
+
+        // Jump animation (3 frames)
+        this.animations["jump"] = new Animator(
+            this.spritesheet,
+            0,      // x coordinate
+            100,    // y coordinate (second row)
+            45,     // frame width
+            50,     // frame height
+            3,      // frame count
+            0.2,    // frame duration
+            0,      // padding
+            false,  // reverse
+            false   // loop
+        );
+
+        // Kick animation (2 frames)
+        this.animations["kick"] = new Animator(
+            this.spritesheet,
+            135,    // x coordinate
+            100,    // y coordinate
+            51,     // frame width
+            50,     // frame height
+            2,      // frame count
+            0.2,    // frame duration
+            0,      // padding
+            false,  // reverse
+            false   // loop
+        );
+
+        // Walk animation (4 frames)
+        this.animations["walk"] = new Animator(
+            this.spritesheet,
+            0,      // x coordinate
+            200,    // y coordinate (third row)
+            41,     // frame width
+            50,     // frame height
+            4,      // frame count
+            0.2,    // frame duration
+            0,      // padding
+            false,  // reverse
+            true    // loop
         );
     }
 
@@ -110,16 +114,16 @@ class Miko {
             this.state = "walk";
         }
         
-        // Optional: Add random actions
+        // Optional part: Adding random actions
         if (Math.random() < 0.007) { // 0.7% chance each frame
             this.state = "kick";
             this.animations["kick"].reset();
             setTimeout(() => {
                 this.state = "walk";
-            }, 400); // Return to walking after 300ms
+            }, 400); // Return to walking after 400ms
         }
         
-        // Optional: Add random jumps
+        // Optional part: Adding random jumps
         if (Math.random() < 0.005 && !this.isInAir) { // 0.5% chance each frame
             this.isInAir = true;
             this.state = "jump";
@@ -127,7 +131,7 @@ class Miko {
             this.animations["jump"].reset();
         }
         
-        // Handle jumping physics if in air
+        // Handles jumping physics if in air
         if (this.isInAir) {
             this.y += this.jumpVelocity;
             this.jumpVelocity += this.gravity;
@@ -139,7 +143,7 @@ class Miko {
             }
         }
 
-        // Check if attack animations are done
+        // Checks if attack animations are done
         if ((this.state === "hit" && this.animations["hit"].isDone()) || 
             (this.state === "kick" && this.animations["kick"].isDone())) {
             this.state = "walk";
