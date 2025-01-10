@@ -31,7 +31,7 @@ class Miko {
             0,      // x coordinate
             0,      // y coordinate
             37,     // frame width
-            50,     // frame height
+            60,     // frame height
             1,      // frame count
             0.2,    // frame duration
             0,      // padding
@@ -45,7 +45,7 @@ class Miko {
             37,     // x coordinate
             0,      // y coordinate
             52,     // frame width
-            50,     // frame height
+            60,     // frame height
             2,      // frame count
             0.2,    // frame duration
             0,      // padding
@@ -59,7 +59,7 @@ class Miko {
             0,      // x coordinate
             100,    // y coordinate (second row)
             45,     // frame width
-            50,     // frame height
+            60,     // frame height
             3,      // frame count
             0.2,    // frame duration
             0,      // padding
@@ -73,7 +73,7 @@ class Miko {
             135,    // x coordinate
             100,    // y coordinate
             51,     // frame width
-            50,     // frame height
+            60,     // frame height
             2,      // frame count
             0.2,    // frame duration
             0,      // padding
@@ -84,10 +84,10 @@ class Miko {
         // Walk animation (4 frames)
         this.animations["walk"] = new Animator(
             this.spritesheet,
-            0,      // x coordinate
-            200,    // y coordinate (third row)
+            143,      // x coordinate
+            211,    // y coordinate (third row)
             41,     // frame width
-            50,     // frame height
+            60,     // frame height
             4,      // frame count
             0.2,    // frame duration
             0,      // padding
