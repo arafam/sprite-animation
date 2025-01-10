@@ -3,7 +3,7 @@ class Miko {
         this.game = game;
         this.x = 200;
         this.y = 200;
-        this.speed = 1;
+        this.speed = 2;
         this.facing = 1; // 1 for right, -1 for left
         
         // Auto movement parameters
