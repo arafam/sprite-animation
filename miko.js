@@ -3,7 +3,7 @@ class Miko {
         this.game = game;
         this.x = 200;
         this.y = 200;
-        this.speed = 6;
+        this.speed = 5;
         this.facing = 1; // 1 for right, -1 for left
         
         // Auto movement parameters
@@ -42,8 +42,8 @@ class Miko {
         // Hit animation (2 frames)
         this.animations["hit"] = new Animator(
             this.spritesheet,
-            142,     // x coordinate
-            17,      // y coordinate
+            142,    // x coordinate
+            17,     // y coordinate
             52,     // frame width
             60,     // frame height
             2,      // frame count
@@ -56,7 +56,7 @@ class Miko {
         // Jump animation (3 frames)
         this.animations["jump"] = new Animator(
             this.spritesheet,
-            143,      // x coordinate
+            143,    // x coordinate
             100,    // y coordinate (second row)
             45,     // frame width
             60,     // frame height
@@ -84,7 +84,7 @@ class Miko {
         // Walk animation (4 frames)
         this.animations["walk"] = new Animator(
             this.spritesheet,
-            143,      // x coordinate
+            143,    // x coordinate
             211,    // y coordinate (third row)
             42,     // frame width
             60,     // frame height
