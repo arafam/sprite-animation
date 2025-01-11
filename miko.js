@@ -3,7 +3,7 @@ class Miko {
         this.game = game;
         this.x = 200;
         this.y = 200;
-        this.speed = 10;
+        this.speed = 7;
         this.facing = 1; // 1 for right, -1 for left
         
         // Auto movement parameters
@@ -86,7 +86,7 @@ class Miko {
             this.spritesheet,
             143,      // x coordinate
             211,    // y coordinate (third row)
-            41,     // frame width
+            42,     // frame width
             60,     // frame height
             4,      // frame count
             0.2,    // frame duration
@@ -115,7 +115,7 @@ class Miko {
         }
         
         // Optional part: Adding random actions
-        if (Math.random() < 0.005) { // 0.7% chance each frame
+        if (Math.random() < 0.006) { // 0.6% chance each frame
             this.state = "kick";
             this.animations["kick"].reset();
             setTimeout(() => {
