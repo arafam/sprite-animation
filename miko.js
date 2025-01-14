@@ -1,65 +1,84 @@
 class Miko {
     constructor(game) {
         this.game = game;
-        this.x = 200;
-        this.y = 200;
-        this.speed = 6;
+        this.x = 20;
+        this.y = 400;
+        this.speed = 9;
         this.facing = 1; // 1 for right, -1 for left
         
         // Auto movement parameters
         this.patrolling = true;
-        this.minX = 50;  // Left boundary
-        this.maxX = 900; // Right boundary
+        this.minX = 20;  // Left boundary
+        this.maxX = 2000; // Right boundary
+        //this.maxX = this.game.canvasWidth; // Dynamically set to canvas width
         
         // Physics parameters
-        this.jumpInitialVelocity = -15;
-        this.gravity = 0.8;
+        this.jumpInitialVelocity = -25;
+        this.gravity = 0.9;
         this.jumpVelocity = 0;
         this.jumpStartY = this.y;
         this.isInAir = false;
         
         // Load sprite sheet
-        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/Miko.png");
+        //this.spritesheet = ASSET_MANAGER.getAsset("./sprites/Miko.png");
+        //this.spritesheet = ASSET_MANAGER.getAsset("./sprites/Red.png");
+        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/Miko2.png");
         
         // States
         this.state = "walk"; // Start in walking state
         this.animations = {};
+
+        //const scaleFactor = 100; // Reduce size to 50%
         
         // Idle animation (single frame)
         this.animations["idle"] = new Animator(
             this.spritesheet,
-            0,      // x coordinate
-            0,      // y coordinate
-            37,     // frame width
-            60,     // frame height
+            0,     // x coordinate
+            0,    // y coordinate
+            0,    // frame width
+            0,    // frame height
             1,      // frame count
             0.2,    // frame duration
             0,      // padding
             false,  // reverse
             true    // loop
         );
-        
-        // Hit animation (2 frames)
+
+        // Hit animation 
         this.animations["hit"] = new Animator(
-            this.spritesheet,
-            142,    // x coordinate
-            17,     // y coordinate
-            52,     // frame width
-            60,     // frame height
-            2,      // frame count
+            this.spritesheet, 
+            85,     // x coordinate   
+            55,     // y coordinate 
+            185,    // frame width
+            221,    // frame height    
+            6,      // frame count
+            0.2,      // frame duration
+            0,      // padding
+            false,  // reverse
+            true    // loop
+        );
+
+        // Walk animation 
+        this.animations["walk"] = new Animator(
+            this.spritesheet, 
+            22,     // x coordinate   
+            281,    // y coordinate
+            200,    // frame width
+            217,    // frame height    
+            6,      // frame count
             0.2,    // frame duration
             0,      // padding
             false,  // reverse
-            false   // loop
+            true    // loop
         );
 
-        // Jump animation (3 frames)
+        // Jump animation 
         this.animations["jump"] = new Animator(
             this.spritesheet,
-            143,    // x coordinate
-            100,    // y coordinate (second row)
-            45,     // frame width
-            60,     // frame height
+            135,    // x coordinate
+            122,    // y coordinate 
+            55,     // frame width
+            64,     // frame height
             3,      // frame count
             0.2,    // frame duration
             0,      // padding
@@ -67,32 +86,18 @@ class Miko {
             false   // loop
         );
 
-        // Kick animation (2 frames)
+        // Kick animation 
         this.animations["kick"] = new Animator(
             this.spritesheet,
-            335,    // x coordinate
-            100,    // y coordinate
-            51,     // frame width
-            60,     // frame height
+            334,    // x coordinate
+            18,     // y coordinate
+            55,     // frame width
+            64,     // frame height
             2,      // frame count
-            0.2,    // frame duration
+            1,      // frame duration
             0,      // padding
             false,  // reverse
             false   // loop
-        );
-
-        // Walk animation (4 frames)
-        this.animations["walk"] = new Animator(
-            this.spritesheet,
-            143,    // x coordinate
-            211,    // y coordinate (third row)
-            42,     // frame width
-            60,     // frame height
-            4,      // frame count
-            0.2,    // frame duration
-            0,      // padding
-            false,  // reverse
-            true    // loop
         );
     }
 
@@ -115,12 +120,12 @@ class Miko {
         }
         
         // Optional part: Adding random actions
-        if (Math.random() < 0.007) { // 0.7% chance each frame
+        if (Math.random() < 0.009) { // 0.9% chance each frame
             this.state = "kick";
             this.animations["kick"].reset();
             setTimeout(() => {
                 this.state = "walk";
-            }, 400); // Return to walking after 400ms
+            }, 200); // Return to walking after 300ms
         }
         
         // Optional part: Adding random jumps
@@ -152,10 +157,17 @@ class Miko {
 
     draw(ctx) {
         ctx.save();
+
+        // Scale down the character
+        const scaleFactor = 0.5; 
         
+        // Applying scaling and fliping if facing left
         if (this.facing === -1) {
-            ctx.scale(-1, 1);
+            //ctx.scale(-1, 1);
+            ctx.scale(-1 * scaleFactor, 1 * scaleFactor);
             ctx.translate(-this.x * 2, 0);
+        }else {
+            ctx.scale(scaleFactor, scaleFactor);
         }
         
         this.animations[this.state].drawFrame(

@@ -8,7 +8,8 @@
             "type": "chrome",
             "request": "launch",
             "name": "Launch Chrome",
-            "url": "https://arafam.github.io/sprite-animation/",
+            "url": "https://localhost:8080/",
+            //"url": "https://arafam.github.io/sprite-animation/",
             "webRoot": "${workspaceFolder}"
         }
     ]
